@@ -1,16 +1,26 @@
-import React, { lazy } from 'react'
-import {ContextProvider} from './Components/ContextProvider'
-import AppLayout from './Layout/AppLayout'
-import { createBrowserRouter ,RouterProvider } from 'react-router-dom'
+import React, { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import {ContextProvider, dataProvider} from './Components/ContextProvider'
 
- const Home = lazy(() => import("./Pages/Home"));
- const Buisneses = lazy(() => import("./Pages/Buisneses"));
+import { createBrowserRouter ,data,RouterProvider } from 'react-router-dom'
+
+ const Home = lazy(()=>import("./Pages/Home"));
+ const Buisneses = lazy(()=>import("./Pages/Buisneses"));
  const Entertenment = lazy(() => import("./Pages/Entertenment"));
- const General = lazy(() => import("./Pages/General"));
+ const General = lazy(()=>import("./Pages/General"));
  const Health = lazy(() => import("./Pages/Health"));
- const  Sports = lazy(() => import("./Pages/Sports"));
- const   Technology = lazy(() => import("./Pages/Technology"));
- const  ErrorPage= lazy(() => import("./Pages/ErrorPage"));
+ const  Sports =lazy(()=>import("./Pages/Sports"));
+ const   Technology = lazy(()=>import("./Pages/Technology"));
+ const  ErrorPage= lazy(()=>import("./Pages/ErrorPage"));
+
+  const AppLayout=lazy(()=>import("./Layout/AppLayout"))
+
+//  import AppLayout from './Layout/AppLayout';
+
+ import intance from './api/intance';
+import Unique from './Pages/Unique';
+import ProtectedRoute from './Components/ProtectedRoute';
+
+import MainLoader from './Ui/MainLoader';
 
 
 
@@ -18,28 +28,97 @@ const App = () => {
 
 
 
+  const  error=useRef(false)
+
+
+
+  const myKey=import.meta.env.VITE_API_KEY
+
+
+
+
+ 
+
+  const fetchData=async(value)=>{
+
+
+    try{
+
+  const res= await intance(`?q=${value}&apiKey=${myKey}`)
+
+  error.current=false
+
+  return res.data
+  
+  }catch(e){
+
+
+    console.log("data")
+error.current=e;
+  
+  }
+}
+
 
 
 
   const routes=createBrowserRouter([
+
+
     
     
     {
       path:"/",
-      element:<AppLayout/>,
+      element:(
+      <Suspense fallback={<MainLoader/>}> <AppLayout/></Suspense>
+     ),
       errorElement:<ErrorPage/>,
+
+      
+
     
       children:[
-        {path:"/",
-          
+
+
+       
+       
+    
+        {
+          path:"/",
+
+          index:true,
           element:<Home/>
           ,
       errorElement:<ErrorPage/>,
 
-      loader:()=>fetch("https://newsapi.org/v2/everything?q=pakistan&apiKey=7a2273733d9a40b081b546392eac0e0a"),
+      loader:()=>fetchData("cartoon"),
+      
 
 
         },
+
+
+
+        {
+
+        
+
+          children:[
+
+
+
+
+
+
+
+            
+          {
+      path:"/unique/:id",
+      element:<Unique/>,
+      errorElement:<ErrorPage/>,
+
+    
+},
 
          {path:"buisneses",
           
@@ -48,7 +127,7 @@ const App = () => {
       errorElement:<ErrorPage/>,
 
       
-      loader:()=>fetch("https://newsapi.org/v2/everything?q=buisness&apiKey=7a2273733d9a40b081b546392eac0e0a"),
+      loader:()=>fetchData("buisness"),
 
 
 
@@ -63,7 +142,7 @@ const App = () => {
       errorElement:<ErrorPage/>,
 
       
-      loader:()=>fetch("https://newsapi.org/v2/everything?q=entertainment&apiKey=7a2273733d9a40b081b546392eac0e0a"),
+      loader:()=>fetchData("entertainment"),
 
 
 
@@ -78,7 +157,7 @@ const App = () => {
 
 
       
-      loader:()=>fetch("https://newsapi.org/v2/everything?q=general&apiKey=7a2273733d9a40b081b546392eac0e0a"),
+      loader:()=>fetchData("general"),
 
 
 
@@ -94,7 +173,7 @@ const App = () => {
 
 
       
-      loader:()=>fetch("https://newsapi.org/v2/everything?q=health&apiKey=7a2273733d9a40b081b546392eac0e0a"),
+      loader:()=>fetchData("health"),
 
 
         },
@@ -108,7 +187,7 @@ const App = () => {
       errorElement:<ErrorPage/>,
 
       
-      loader:()=>fetch("https://newsapi.org/v2/everything?q=sports&apiKey=7a2273733d9a40b081b546392eac0e0a"),
+      loader:()=>fetchData("sports"),
 
 
         },
@@ -120,23 +199,30 @@ const App = () => {
           ,
       errorElement:<ErrorPage/>,
       
-      loader:()=>fetch("https://newsapi.org/v2/everything?q=technology&apiKey=7a2273733d9a40b081b546392eac0e0a"),
+      loader:()=>fetchData("technology"),
 
 
 
         },
+          ]
+
+
+
+
+
+
+        }
+
       ]
 
     },
-
-    
-  
+   
   ])
 
 
   return (
     <>
-    <ContextProvider>
+    <ContextProvider error={error}>
 
      <RouterProvider router={routes}/>
 

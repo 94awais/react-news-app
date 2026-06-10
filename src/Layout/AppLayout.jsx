@@ -1,31 +1,78 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { dataProvider } from '../Components/ContextProvider'
 import  { lazy } from 'react'
-const Header=lazy(()=>import("./Header"))
-const Footer=lazy(()=>import("./Footer"))
-const NavBaar=lazy(()=>import("./NavBaar"))
+// const Header=lazy(()=>import("./Header"))
+// const Footer=lazy(()=>import("./Footer"))
+// const NavBaar=lazy(()=>import("./NavBaar"))
+
+// const Header = lazy(()=>import('./Header')) 
+
+import  Header from './Header'
+
+
+import NavBaar from './NavBaar'
+import Footer from './Footer'
 import { Outlet, useNavigation } from 'react-router-dom'
 
 import { Suspense } from 'react'
-import { ScaleLoader } from 'react-spinners'
+import { RingLoader, ScaleLoader } from 'react-spinners'
+import Loader from '../Ui/Loader'
+const  SideBaar= lazy(()=>import('../Ui/SideBaar')) 
+
+
+
+
+import ParticularProtectedRoute from '../Components/ParticularProtectedRoute'
+
+
+// import  SideBaar from '../Ui/SideBaar'
 
 
 const AppLayout = () => {
 
 
+const [enable,setEnable]=useState(false)
 
-  const navigation=useNavigation()
 
+const navig=useNavigation();
+
+
+
+ 
     
   return (
    <>
-   <Header/>
-<Suspense fallback={<ScaleLoader />}>
+   
 
-{navigation.state==="loading"?<ScaleLoader  className='text-center absolute  top-36 md:top-30 left-1/2 -translate-x-1/2 mt-8'/>:<Outlet/>}
+   
+  <Header enable={enable} setEnable={setEnable}/>
+<NavBaar/>
 
-   </Suspense>
-   <Footer/>
+{ enable &&
+(<ParticularProtectedRoute>
+ <Suspense fallback={null}>
+
+  <SideBaar/>
+  </Suspense>
+</ParticularProtectedRoute>)
+
+}
+
+
+
+<Suspense fallback={  <div className="h-screen flex  w-full  justify-center"><RingLoader  color="#34e7ec" size={70} /></div>}> 
+
+
+
+
+
+{ navig.state==="loading"?<Loader/>:<Suspense fallback={null}><Outlet/></Suspense>}
+
+
+
+    </Suspense> 
+     <Footer/>
+  
    
    </>
   )

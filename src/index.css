@@ -5,14 +5,79 @@
 
     scrollbar-width: none;
 }
-.active{
 
-    color:blue;
+
+.active {
+  position: relative;
+  color: #E5E7EB;
+  font-weight: 500;
+  animation: activeText 0.3s ease-out;
 }
+
+/* wider + 5px niche underline */
+.active::after {
+  content: "";
+  position: absolute;
+  left: -10%;          /* 🔥 width badhane ke liye */
+  bottom: -20px;       /* 🔥 5px aur niche */
+
+  width: 120%;         /* 🔥 normal se wide */
+  height: 2px;
+
+  background: linear-gradient(
+    90deg,
+    #F472B6,
+    #A78BFA,
+    #38BDF8
+  );
+
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: activeLine 0.45s ease-out forwards;
+}
+
+/* text micro interaction */
+@keyframes activeText {
+  from {
+    transform: translateY(2px);
+    opacity: 0.7;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes activeLine {
+  to {
+    transform: scaleX(1);
+  }
+}
+
 
 
 body{
 
-
+    
     padding-top: 180px;
+}
+.react-loading-skeleton {
+  display: inline-block !important;
+
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease;
 }

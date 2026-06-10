@@ -1,9 +1,13 @@
 
 import React, { useContext, useState } from 'react'
-import { useCallback } from 'react'
-import { createContext } from 'react'
+import { useCallback,createContext } from 'react'
+
+import intance from '../api/intance'
 
 const context=createContext()
+
+
+const myKey=import.meta.env.VITE_API_KEY
 
  
 const dataProvider=()=>{
@@ -12,31 +16,42 @@ const dataProvider=()=>{
    const data=useContext(context)
 
 
+
+   console.log(data)
+
+
    return data;
 
 
 
 }
 
-const ContextProvider = ({children}) => {
+const ContextProvider = ({error,children}) => {
 
 
 
   
     const [input,inputSet]=useState("")
     const [news,setNews]=useState([])
+    const [side,setSide]=useState([])
+    const [isOpen,setOpen]=useState(false)
+    const [real,setReal]=useState(true)
+    const [unique,setUnique]=useState([])
+    const [filter,setFilter]=useState("")
+
+
   
 
 
     console.log(news)
   
   
+   
   
     console.log(input)
   
   
     function debounce(fn,delay){
-  
   
   
       let timer=0;
@@ -59,23 +74,32 @@ const ContextProvider = ({children}) => {
     }
   
   
-   const search= useCallback(debounce(getData,1000),[]) 
+   const search= useCallback(debounce(getData,500),[]) 
   
   
   
    async function getData(value) {
   
-  
+
+    console.log(value)
+  if(value){
     
   
-    const res=await fetch(`https://newsapi.org/v2/everything?q=${value}&apiKey=2dc3b6eb92f64f8fbade62280753d415`);
+    const res=await intance(`?q=${value}&apiKey=${myKey}`);
   
   
-    const data=await res.json()
+    const data=res.data
   
   
   setNews(data)
   
+  }
+
+
+  else{
+
+    setNews([])
+  }
   
     
    }
@@ -89,7 +113,8 @@ const ContextProvider = ({children}) => {
   return (
     <>
 
-  <context.Provider value={{input,inputSet,search,news}}> {children} </context.Provider>
+  <context.Provider value={{input,inputSet,search,news,setOpen,isOpen,setSide,side,real,setReal,error,unique,setUnique,filter,setFilter}}> {children} </context.Provider>
+
 
 
 
