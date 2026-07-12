@@ -139,7 +139,7 @@ md:flex-row
     active:scale-[0.96]
   "
 >
- log
+ login
 </button>
 
 
